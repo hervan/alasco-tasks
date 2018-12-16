@@ -8,6 +8,10 @@ const point1 = new Point(1, 1);
 const point2 = new Point(1, 2);
 const point3 = new Point(2, 2);
 const point4 = new Point(2, 1);
+const point5 = new Point(3, 1);
+const point6 = new Point(3, 2);
+const point7 = new Point(4, 2);
+const point8 = new Point(4, 1);
 
 test('point1 is not congruent to point2', () => {
   expect(
@@ -25,6 +29,10 @@ const segment1 = new Segment(point1, point2);
 const segment2 = new Segment(point2, point3);
 const segment3 = new Segment(point3, point4);
 const segment4 = new Segment(point4, point1);
+const segment5 = new Segment(point5, point6);
+const segment6 = new Segment(point6, point7);
+const segment7 = new Segment(point7, point8);
+const segment8 = new Segment(point8, point5);
 
 test('length of segment1 is 1', () => {
   expect(
@@ -68,11 +76,30 @@ test('segment1 doesn\'t form a right angle with segment3 (they\'re parallel)', (
   ).toBe(false);
 });
 
+test('segment1 forms a right angle with segment ((1, 2), (3, 2))', () => {
+  expect(
+    segment1.formsRightAngle(new Segment(new Point(1, 2), new Point(3, 2)))
+  ).toBe(true);
+});
+
 const rectangle1 = new Rectangle([segment1, segment2, segment3, segment4]);
 const rectangle2 = new Rectangle([segment1, segment2, segment3, segment4]);
+const rectangle3 = new Rectangle([segment5, segment6, segment7, segment8]);
 
-test('rectangles are identical (and therefore intersect)', () => {
+test('area of rectangle1 is 1', () => {
+  expect(
+    rectangle1.area()
+  ).toBe(1);
+});
+
+test('rectangle1 and rectangle2 are identical (and therefore intersect)', () => {
   expect(
     rectangle1.intersects(rectangle2)
   ).toBe(true);
+});
+
+test('rectangle1 and rectangle3 don\'t intersect', () => {
+  expect(
+    rectangle1.intersects(rectangle3)
+  ).toBe(false);
 });

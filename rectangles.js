@@ -33,23 +33,34 @@ class Segment {
   }
 }
 
-class Rectangle {
+class Polygon {
   constructor(segments) {
     this.segments = segments;
+    this.sides = segments.length;
+  }
+
+  points() {
+    return [this.segments[0].point1, ...this.segments.map((segment) => segment.point2)];
   }
 
   area() {
-    return this.segments.reduce((acc, segment) => acc + segment.determinant() / 2, 0);
+    return Math.abs(this.segments.reduce((acc, segment) => acc + segment.determinant() / 2, 0));
   }
+}
 
+class Rectangle extends Polygon {
   isValid() {
-    return this.area() > 0
-    && this.segments.length == 4
+    return this.area() != 0
+    && this.sides == 4
     && this.segments.every((segment, i) => segment.formsRightAngle(this.segments[(i + 1) % 4]));
   }
 
+  isPointInside(point) {
+    throw "Not implemented.";
+  }
+
   intersects(rectangle2) {
-    return false;
+    throw "Not implemented.";
   }
 }
 
