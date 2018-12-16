@@ -35,6 +35,19 @@ class Segment {
       && closeTo(Math.pow(this.length(), 2) + Math.pow(segment2.length(), 2),
         Math.pow((new Segment(segment2.point2, this.point1)).length(), 2));
   }
+
+  // from http://www.cs.swan.ac.uk/~cssimon/line_intersection.html
+  intersects(segment2) {
+    const { x: x1, y: y1 } = this.point1;
+    const { x: x2, y: y2 } = this.point2;
+    const { x: x3, y: y3 } = segment2.point1;
+    const { x: x4, y: y4 } = segment2.point2;
+    const ta = ((y3 - y4) * (x1 - x3) + (x4 - x3) * (y1 - y3))
+      / ((x4 - x3) * (y1 - y2) - (x1 - x2) * (y4 - y3));
+    const tb = ((y1 - y2) * (x1 - x3) + (x2 - x1) * (y1 - y3))
+      / ((x4 - x3) * (y1 - y2) - (x1 - x2) * (y4 - y3));
+    return 0 <= ta && ta <= 1 && 0 <= tb && tb <= 1;
+  }
 }
 
 class Polygon {
@@ -51,7 +64,7 @@ class Polygon {
   // tests if point is inside a polygon, by adding the areas of the triangles
   // formed by each side and the given point; if the area is the same as the
   // area of the polygon, then the point is inside it (or over its sides).
-  isPointInside(point) {
+  contains(point) {
     const triangleFanArea = this.segments.reduce((acc, segment) => acc + (new Polygon([segment.point1, segment.point2, point])).area(), 0);
     const rectangleArea = this.area();
     return rectangleArea > triangleFanArea || closeTo(rectangleArea, triangleFanArea);
@@ -59,13 +72,30 @@ class Polygon {
 }
 
 class Rectangle extends Polygon {
+
+  // test if the rectangle is strictly valid, as in all four angles being right;
+  // otherwise it's a triangle, or a line segment, or a point.
   isValid() {
     return this.sides == 4
     && this.segments.every((segment, i) => segment.formsRightAngle(this.segments[(i + 1) % 4]));
   }
 
   intersects(rectangle2) {
-    throw "Not implemented.";
+    if (!this.isValid() || !rectangle2.isValid()) {
+      return false;
+    }
+
+    // if any point of one rectangle is inside (or over a side of) the other
+    // rectangle, they intersect.
+    if (this.points.some((point) => rectangle2.contains(point))
+      || rectangle2.points.some((point) => this.contains(point))) {
+      return true;
+    }
+
+    // if previous tests were excluded, test whether any side from one rectangle
+    // intersects any side from the other rectangle; at this point it will tell
+    // whether the rectangles intersect or not.
+    return (this.segments.some((segment1) => rectangle2.segments.some((segment2) => segment1.intersects(segment2))));
   }
 }
 

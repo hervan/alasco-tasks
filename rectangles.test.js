@@ -34,6 +34,8 @@ const segment5 = new Segment(point5, point6);
 const segment6 = new Segment(point6, point7);
 const segment7 = new Segment(point7, point8);
 const segment8 = new Segment(point8, point5);
+const diagonal1 = new Segment(point1, point3);
+const diagonal2 = new Segment(point2, point4);
 
 test('length of segment1 is 1', () => {
   expect(
@@ -41,9 +43,9 @@ test('length of segment1 is 1', () => {
   ).toBe(1);
 });
 
-test('segment from point1 to point3 is a unit square diagonal, so its length is sqrt(2)', () => {
+test('diagonal1 is a unit square diagonal, so its length is sqrt(2)', () => {
   expect(
-    (new Segment(point1, point3)).length()
+    diagonal1.length()
   ).toBe(Math.SQRT2);
 });
 
@@ -83,6 +85,24 @@ test('segment1 forms a right angle with segment ((1, 2), (3, 2))', () => {
   ).toBe(true);
 });
 
+test('segment1 and segment2 touch each other on a vertex, so they intersect', () => {
+  expect(
+    segment1.intersects(segment2)
+  ).toBe(true);
+});
+
+test('segment1 and segment3 don\'t touch each other, so they don\'t intersect', () => {
+  expect(
+    segment1.intersects(segment3)
+  ).toBe(false);
+});
+
+test('diagonal1 and diagonal2 intersect each other on the center of rectangle1', () => {
+  expect(
+    diagonal1.intersects(diagonal2)
+  ).toBe(true);
+});
+
 const rectangle1 = new Rectangle([point1, point2, point3, point4]);
 const rectangle2 = new Rectangle([point1, point2, point3, point4]);
 const rectangle3 = new Rectangle([point5, point6, point7, point8]);
@@ -95,37 +115,43 @@ test('area of rectangle1 is 1', () => {
 
 test('point1 is on a vertex of rectangle1, so it\'s inside rectangle1', () => {
   expect(
-    rectangle1.isPointInside(point1)
+    rectangle1.contains(point1)
   ).toBe(true);
 });
 
 test('(1.0, 1.5) is over a side of rectangle1, so it\'s inside rectangle1', () => {
   expect(
-    rectangle1.isPointInside(new Point(1.0, 1.5))
+    rectangle1.contains(new Point(1.0, 1.5))
   ).toBe(true);
 });
 
 test('(1.5, 1.5) is on the center of rectangle1, so it\'s inside rectangle1', () => {
   expect(
-    rectangle1.isPointInside(new Point(1.5, 1.5))
+    rectangle1.contains(new Point(1.5, 1.5))
   ).toBe(true);
 });
 
 test('(1.0, 3.0) is outside rectangle1', () => {
   expect(
-    rectangle1.isPointInside(new Point(1.0, 3.0))
+    rectangle1.contains(new Point(1.0, 3.0))
   ).toBe(false);
 });
 
 test('(3.0, 3.0) is outside rectangle1', () => {
   expect(
-    rectangle1.isPointInside(new Point(3.0, 3.0))
+    rectangle1.contains(new Point(3.0, 3.0))
   ).toBe(false);
 });
 
 test('points 5, 6, 7 and 8 are outside rectangle1', () => {
   expect(
-    [point5, point6, point7, point8].every((point) => !rectangle1.isPointInside(point))
+    [point5, point6, point7, point8].every((point) => !rectangle1.contains(point))
+  ).toBe(true);
+});
+
+test('points 1, 2, 3 and 4 are outside rectangle3', () => {
+  expect(
+    [point1, point2, point3, point4].every((point) => !rectangle3.contains(point))
   ).toBe(true);
 });
 
@@ -133,4 +159,20 @@ test('rectangle1 and rectangle3 don\'t intersect', () => {
   expect(
     rectangle1.intersects(rectangle3)
   ).toBe(false);
+});
+
+test('a rotated rectangle with one vertex inside another rectangle (therefore intersecting each other)', () => {
+  expect(
+    new Rectangle([
+      new Point(1, 3),
+      new Point(3, 5),
+      new Point(5, 3),
+      new Point(3, 1)
+    ]).intersects(new Rectangle([
+      new Point(4, 4),
+      new Point(6, 4),
+      new Point(6, 2),
+      new Point(4, 2)
+    ]))
+  ).toBe(true);
 });
