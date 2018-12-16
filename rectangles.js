@@ -20,14 +20,16 @@ class Segment {
   }
 
   length() {
-    return Math.pow(this.point2.x - this.point1.x, 2)
-    + Math.pow(this.point2.y - this.point1.y, 2);
+    return Math.sqrt(
+      Math.pow(this.point2.x - this.point1.x, 2)
+      + Math.pow(this.point2.y - this.point1.y, 2)
+    );
   }
 
   formsRightAngle(segment2) {
     return this.point2.isCongruent(segment2.point1)
-    && Math.pow(this.length(), 2) + Math.pow(segment2.length(), 2) ==
-      Math.pow((new Segment(segment2.point2, this.point1)).length(), 2);
+      && Math.abs(Math.pow(this.length(), 2) + Math.pow(segment2.length(), 2)
+        - Math.pow((new Segment(segment2.point2, this.point1)).length(), 2)) < 0.0000000001;
   }
 }
 
