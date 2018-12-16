@@ -1,4 +1,5 @@
 const {
+  precision,
   Point,
   Segment,
   Rectangle
@@ -82,19 +83,49 @@ test('segment1 forms a right angle with segment ((1, 2), (3, 2))', () => {
   ).toBe(true);
 });
 
-const rectangle1 = new Rectangle([segment1, segment2, segment3, segment4]);
-const rectangle2 = new Rectangle([segment1, segment2, segment3, segment4]);
-const rectangle3 = new Rectangle([segment5, segment6, segment7, segment8]);
+const rectangle1 = new Rectangle([point1, point2, point3, point4]);
+const rectangle2 = new Rectangle([point1, point2, point3, point4]);
+const rectangle3 = new Rectangle([point5, point6, point7, point8]);
 
 test('area of rectangle1 is 1', () => {
   expect(
     rectangle1.area()
-  ).toBe(1);
+  ).toBeCloseTo(1, precision);
 });
 
-test('rectangle1 and rectangle2 are identical (and therefore intersect)', () => {
+test('point1 is on a vertex of rectangle1, so it\'s inside rectangle1', () => {
   expect(
-    rectangle1.intersects(rectangle2)
+    rectangle1.isPointInside(point1)
+  ).toBe(true);
+});
+
+test('(1.0, 1.5) is over a side of rectangle1, so it\'s inside rectangle1', () => {
+  expect(
+    rectangle1.isPointInside(new Point(1.0, 1.5))
+  ).toBe(true);
+});
+
+test('(1.5, 1.5) is on the center of rectangle1, so it\'s inside rectangle1', () => {
+  expect(
+    rectangle1.isPointInside(new Point(1.5, 1.5))
+  ).toBe(true);
+});
+
+test('(1.0, 3.0) is outside rectangle1', () => {
+  expect(
+    rectangle1.isPointInside(new Point(1.0, 3.0))
+  ).toBe(false);
+});
+
+test('(3.0, 3.0) is outside rectangle1', () => {
+  expect(
+    rectangle1.isPointInside(new Point(3.0, 3.0))
+  ).toBe(false);
+});
+
+test('points 5, 6, 7 and 8 are outside rectangle1', () => {
+  expect(
+    [point5, point6, point7, point8].every((point) => !rectangle1.isPointInside(point))
   ).toBe(true);
 });
 
