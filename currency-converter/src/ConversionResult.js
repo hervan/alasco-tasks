@@ -1,11 +1,9 @@
 import React from 'react';
 
 let ConversionResult = (props) =>
-  <div>
-    {!props.state.convertedAmount ? "" :
-    `${props.state.currencies[props.state.currencyFrom].symbol}${props.state.amount}
-    is
-    ${props.state.currencies[props.state.currencyTo].symbol}${props.state.convertedAmount}`}
+  <div className="conversion-result">
+    {!props.convertedAmount ? (!props.amount ? "Invalid number." : "") :
+    `${props.currencies[props.currencyFrom].symbol}${props.amount} is ${props.currencies[props.currencyTo].symbol}${props.convertedAmount}`}
   </div>;
 
 export default ConversionResult;

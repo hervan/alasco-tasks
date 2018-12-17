@@ -12,6 +12,7 @@ class Converter extends Component {
       amount: 1,
       convertedAmount: null,
       currentRate: 1,
+      loadingRates: true,
       currencies: [
         { code: null, symbol: null, name: "choose a currency" },
         { code: "EUR", symbol: "€", name: "euro" },
@@ -21,6 +22,10 @@ class Converter extends Component {
   };
 
   changeCurrency = (from = null, to = null) => {
+    
+    this.setState({
+      loadingRates: true
+    });
 
     let currencyFrom = from ? from : this.state.currencyFrom;
     let currencyTo = to ? to : this.state.currencyTo;
@@ -30,6 +35,15 @@ class Converter extends Component {
       this.setState({
         currencyFrom: currencyFrom,
         currencyTo: currencyTo
+      });
+    } else if (currencyFrom === currencyTo) {
+
+      this.setState({
+        currencyFrom: currencyFrom,
+        currencyTo: currencyTo,
+        currentRate: 1,
+        loadingRates: false,
+        convertedAmount: null
       });
     } else {
 
@@ -41,25 +55,28 @@ class Converter extends Component {
         this.setState({
           currencyFrom: currencyFrom,
           currencyTo: currencyTo,
-          currentRate: data[conversion_code].val
+          currentRate: data[conversion_code].val,
+          loadingRates: false,
+          convertedAmount: null
         });
       });
     }
   }
 
-  changeFrom = (id) => {
-    this.changeCurrency(id, null);
+  changeFrom = (e) => {
+    this.changeCurrency(Number(e.target.value), null);
   }
 
-  changeTo = (id) => {
-    this.changeCurrency(null, id);
+  changeTo = (e) => {
+    this.changeCurrency(null, Number(e.target.value));
   }
 
-  changeAmount = (amount) => {
-    this.setState({
-      amount: amount,
+  changeAmount = (e) => {
+    let amount = Number(e.target.value);
+    this.setState((prevState) => ({
+      amount: Number(amount) == null ? prevState.amount : Number(amount),
       convertedAmount: null
-    });
+    }));
   }
 
   convert = () => {
@@ -82,8 +99,8 @@ class Converter extends Component {
             </p>
             <CurrencyInput amount={this.state.amount} changeHandler={this.changeAmount} />
           </div>
-          <ConvertButton convert={this.convert} />
-          <ConversionResult state={this.state} />
+          <ConvertButton convert={this.convert} loadingRates={this.state.loadingRates} />
+          <ConversionResult {...this.state} />
         </main>
       </div>
     );
