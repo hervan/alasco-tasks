@@ -1,6 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-let CurrencyPicker = () =>
+let CurrencyInput = (props) =>
   <div>
-    
+    <input type="text" onChange={(e) => props.changeHandler(Number(e.target.value))} />
   </div>;
+
+export default CurrencyInput;

@@ -1,6 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-let CurrencyPicker = () =>
+let CurrencyPicker = (props) =>
   <div>
-    
+    <select onChange={(e) => props.changeHandler(Number(e.target.value))} defaultValue={props.selectedOption}>
+      {props.currencies.map(({code, name}, i) =>
+        <option key={i} value={i}>{name}</option>
+      )}
+    </select>
   </div>;
+
+export default CurrencyPicker;
