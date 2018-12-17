@@ -14,7 +14,7 @@ class Converter extends Component {
       currentRate: 1,
       loadingRates: true,
       currencies: [
-        { code: null, symbol: null, name: "choose a currency" },
+        { code: null, symbol: null, name: null },
         { code: "EUR", symbol: "€", name: "euro" },
         { code: "USD", symbol: "US$", name: "dollar" },
         { code: "JPY", symbol: "¥", name: "yen" }
@@ -34,7 +34,10 @@ class Converter extends Component {
 
       this.setState({
         currencyFrom: currencyFrom,
-        currencyTo: currencyTo
+        currencyTo: currencyTo,
+        currentRate: 0,
+        loadingRates: true,
+        convertedAmount: null
       });
     } else if (currencyFrom === currencyTo) {
 
@@ -87,21 +90,28 @@ class Converter extends Component {
 
   render() {
     return (
-      <div>
-        <main>
-          <div>
-            <CurrencyPicker key="from" currencies={this.state.currencies} changeHandler={this.changeFrom} />
-            <CurrencyPicker key="to" currencies={this.state.currencies} changeHandler={this.changeTo} />
+      <div className="text-center">
+        <div className="row">
+          <div className="cover-container d-flex h-100 p-3 mx-auto flex-column">
+            <header className="masthead mb-auto">
+              <div class="inner">
+                <h3 class="masthead-brand">Currency converter</h3>
+              </div>
+            </header>
+            <main role="main" className="inner cover">
+              <div className="lead">
+                <CurrencyPicker key="from" currencies={[{...this.state.currencies[0], name: "from"}, ...this.state.currencies.slice(1)]} changeHandler={this.changeFrom} />
+                <CurrencyPicker key="to" currencies={[{...this.state.currencies[0], name: "to"}, ...this.state.currencies.slice(1)]} changeHandler={this.changeTo} />
+              </div>
+              <div className="lead">
+                Type an amount:
+                <CurrencyInput amount={this.state.amount} changeHandler={this.changeAmount} />
+              </div>
+              <ConvertButton convert={this.convert} loadingRates={this.state.loadingRates} />
+              <ConversionResult {...this.state} />
+            </main>
           </div>
-          <div>
-            <p>
-              Type an amount:
-            </p>
-            <CurrencyInput amount={this.state.amount} changeHandler={this.changeAmount} />
-          </div>
-          <ConvertButton convert={this.convert} loadingRates={this.state.loadingRates} />
-          <ConversionResult {...this.state} />
-        </main>
+        </div>
       </div>
     );
   }
